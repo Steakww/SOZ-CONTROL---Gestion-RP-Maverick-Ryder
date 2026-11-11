@@ -1,0 +1,280 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOZ CONTROL | Maverick Ryder</title>
+<style>
+:root {
+  --bg:#0b0911; --panel:#171321; --panel2:#211a30;
+  --purple:#9855ed; --light:#c49aff; --text:#f5efff;
+  --muted:#a99bb9; --border:#342744; --green:#50d99a;
+  --red:#ff647d;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+font-family:Arial,sans-serif}
+header{padding:24px 5%;background:#130e1d;border-bottom:1px solid var(--border)}
+header h1{margin:0;color:var(--light);letter-spacing:3px}
+header p{margin:7px 0 0;color:var(--muted)}
+nav{display:flex;gap:8px;flex-wrap:wrap;padding:15px 5%;
+background:#100d17;position:sticky;top:0;z-index:2}
+button{cursor:pointer;border:1px solid var(--border);border-radius:8px;
+padding:10px 14px;background:var(--panel2);color:var(--text)}
+button:hover,.active{background:var(--purple);color:white}
+main{max-width:1200px;margin:auto;padding:25px 5%}
+section{display:none}section.active{display:block}
+h2{color:var(--light);margin-top:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:15px}
+.card{background:var(--panel);border:1px solid var(--border);
+border-radius:13px;padding:18px;margin-bottom:15px}
+.stat{font-size:26px;font-weight:bold;margin-top:10px}
+small,.muted{color:var(--muted)}
+input,select{width:100%;padding:11px;margin:6px 0 12px;
+background:#0e0b15;border:1px solid var(--border);
+border-radius:7px;color:white}
+label{font-size:13px;color:var(--muted)}
+form{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px}
+form button{align-self:end;margin-bottom:12px}
+table{width:100%;border-collapse:collapse;min-width:550px}
+th,td{text-align:left;padding:12px;border-bottom:1px solid var(--border)}
+th{color:var(--light)}
+.table-wrap{overflow-x:auto}
+.danger{color:var(--red)}
+.good{color:var(--green)}
+.actions{display:flex;gap:6px;flex-wrap:wrap}
+footer{text-align:center;padding:25px;color:var(--muted)}
+.result{font-size:25px;color:var(--light);margin:10px 0}
+@media(max-width:600px){header h1{font-size:22px}main{padding:18px 4%}}
+</style>
+</head>
+<body>
+<header>
+<h1>SOZ CONTROL</h1>
+<p>Gestion interne RP · Maverick Ryder · Ash & Wolf</p>
+</header>
+
+<nav>
+<button class="active" onclick="show('dashboard',this)">Accueil</button>
+<button onclick="show('stock',this)">Stock</button>
+<button onclick="show('finance',this)">Finances</button>
+<button onclick="show('sales',this)">Ventes</button>
+<button onclick="show('members',this)">Annuaire</button>
+<button onclick="show('history',this)">Historique</button>
+<button onclick="show('calculator',this)">Calculatrice</button>
+</nav>
+
+<main>
+<section id="dashboard" class="active">
+<h2>Tableau de bord</h2>
+<div class="grid">
+<div class="card"><small>Argent propre</small><div class="stat" id="dashClean">0 $</div></div>
+<div class="card"><small>Argent sale</small><div class="stat" id="dashDirty">0 $</div></div>
+<div class="card"><small>Références en stock</small><div class="stat" id="dashItems">0</div></div>
+<div class="card"><small>Ventes enregistrées</small><div class="stat" id="dashSales">0</div></div>
+</div>
+<div class="card">
+<h3>Bienvenue, Maverick Ryder</h3>
+<p class="muted">Bienvenue dans ton espace de gestion interne Ash & Wolf.</p>
+<p>Utilise le menu pour gérer tes stocks, finances, ventes et membres.</p>
+</div>
+</section>
+
+<section id="stock">
+<h2>Gestion du stock</h2>
+<div class="card">
+<form id="stockForm">
+<div><label>Nom de l'article</label><input id="itemName" required></div>
+<div><label>Quantité</label><input id="itemQty" type="number" min="0" required></div>
+<div><label>Prix unitaire ($)</label><input id="itemPrice" type="number" min="0" required></div>
+<button>Ajouter au stock</button>
+</form>
+</div>
+<div class="card table-wrap"><table>
+<thead><tr><th>Article</th><th>Quantité</th><th>Prix</th><th>Valeur</th><th>Action</th></tr></thead>
+<tbody id="stockTable"></tbody>
+</table></div>
+</section>
+
+<section id="finance">
+<h2>Gestion des finances RP</h2>
+<div class="grid">
+<div class="card"><small>Argent propre</small><div class="stat good" id="cleanTotal">0 $</div></div>
+<div class="card"><small>Argent sale</small><div class="stat danger" id="dirtyTotal">0 $</div></div>
+</div>
+<div class="card">
+<form id="financeForm">
+<div><label>Type</label><select id="moneyType"><option value="clean">Argent propre</option><option value="dirty">Argent sale</option></select></div>
+<div><label>Opération</label><select id="moneyAction"><option value="add">Ajouter</option><option value="remove">Retirer</option></select></div>
+<div><label>Montant ($)</label><input id="moneyAmount" type="number" min="1" required></div>
+<div><label>Motif</label><input id="moneyReason" required></div>
+<button>Valider l'opération</button>
+</form>
+</div>
+</section>
+
+<section id="sales">
+<h2>Enregistrement des ventes</h2>
+<div class="card">
+<form id="saleForm">
+<div><label>Article vendu</label><input id="saleName" required></div>
+<div><label>Quantité</label><input id="saleQty" type="number" min="1" required></div>
+<div><label>Montant total ($)</label><input id="saleAmount" type="number" min="1" required></div>
+<div><label>Type de paiement</label><select id="saleType"><option value="clean">Propre</option><option value="dirty">Sale</option></select></div>
+<div><label>Client / acheteur</label><input id="saleClient" placeholder="Nom RP"></div>
+<button>Enregistrer la vente</button>
+</form>
+</div>
+<div class="card table-wrap"><table>
+<thead><tr><th>Date</th><th>Article</th><th>Quantité</th><th>Montant</th><th>Paiement</th><th>Client</th></tr></thead>
+<tbody id="salesTable"></tbody>
+</table></div>
+</section>
+
+<section id="members">
+<h2>Annuaire des membres</h2>
+<div class="card">
+<form id="memberForm">
+<div><label>Nom RP</label><input id="memberName" required></div>
+<div><label>Grade / rôle</label><input id="memberRole" placeholder="Membre, chef..."></div>
+<div><label>RIB fictif RP</label><input id="memberRib" placeholder="ASHW-0000"></div>
+<div><label>Contact RP</label><input id="memberContact"></div>
+<button>Ajouter le membre</button>
+</form>
+</div>
+<div class="card table-wrap"><table>
+<thead><tr><th>Nom</th><th>Grade</th><th>RIB fictif</th><th>Contact</th><th>Action</th></tr></thead>
+<tbody id="membersTable"></tbody>
+</table></div>
+</section>
+
+<section id="history">
+<h2>Historique des opérations</h2>
+<div class="card table-wrap"><table>
+<thead><tr><th>Date</th><th>Opération</th><th>Détail</th></tr></thead>
+<tbody id="historyTable"></tbody>
+</table></div>
+</section>
+
+<section id="calculator">
+<h2>Calculatrice</h2>
+<div class="card" style="max-width:350px">
+<input id="calcDisplay" class="result" value="0" readonly>
+<div class="grid" style="grid-template-columns:repeat(4,1fr)">
+<button onclick="calcClear()">C</button>
+<button onclick="calcAdd('/')">÷</button>
+<button onclick="calcAdd('*')">×</button>
+<button onclick="calcAdd('-')">−</button>
+<button onclick="calcAdd('7')">7</button>
+<button onclick="calcAdd('8')">8</button>
+<button onclick="calcAdd('9')">9</button>
+<button onclick="calcAdd('+')">+</button>
+<button onclick="calcAdd('4')">4</button>
+<button onclick="calcAdd('5')">5</button>
+<button onclick="calcAdd('6')">6</button>
+<button onclick="calcEqual()">=</button>
+<button onclick="calcAdd('1')">1</button>
+<button onclick="calcAdd('2')">2</button>
+<button onclick="calcAdd('3')">3</button>
+<button onclick="calcAdd('0')">0</button>
+<button onclick="calcAdd('.')">.</button>
+</div>
+</div>
+</section>
+
+<div class="card">
+<h3>Sauvegarde et données</h3>
+<p class="muted">Les données sont enregistrées dans le navigateur utilisé.</p>
+<div class="actions">
+<button onclick="exportData()">Exporter les données JSON</button>
+<button onclick="document.getElementById('importFile').click()">Importer une sauvegarde</button>
+<button onclick="resetData()" class="danger">Tout effacer</button>
+<input id="importFile" type="file" accept=".json" hidden onchange="importData(event)">
+</div>
+</div>
+</main>
+<footer>SOZ CONTROL · Espace RP privé · Ash & Wolf</footer>
+
+<script>
+const defaults={stock:[],sales:[],members:[],history:[],clean:0,dirty:0};
+let data;
+try{data=JSON.parse(localStorage.getItem('sozControlData'))||structuredClone(defaults)}
+catch(e){data=JSON.parse(JSON.stringify(defaults))}
+function save(){localStorage.setItem('sozControlData',JSON.stringify(data));render()}
+function money(n){return Number(n||0).toLocaleString('fr-FR')+' $'}
+function log(type,detail){data.history.unshift({date:new Date().toLocaleString('fr-FR'),type,detail})}
+function show(id,btn){
+document.querySelectorAll('main section').forEach(s=>s.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+btn.classList.add('active');
+}
+document.getElementById('stockForm').onsubmit=e=>{
+e.preventDefault();
+const name=itemName.value.trim(),qty=+itemQty.value,price=+itemPrice.value;
+const old=data.stock.find(x=>x.name.toLowerCase()===name.toLowerCase());
+if(old){old.qty+=qty;old.price=price}else data.stock.push({name,qty,price});
+log('Stock',`${name} : +${qty}`);e.target.reset();save();
+};
+document.getElementById('financeForm').onsubmit=e=>{
+e.preventDefault();
+const type=moneyType.value,action=moneyAction.value,amount=+moneyAmount.value;
+if(action==='remove'&&data[type]<amount){alert('Solde insuffisant.');return}
+data[type]+=action==='add'?amount:-amount;
+log('Finance',`${action==='add'?'Ajout':'Retrait'} de ${money(amount)} (${type}) : ${moneyReason.value}`);
+e.target.reset();save();
+};
+document.getElementById('saleForm').onsubmit=e=>{
+e.preventDefault();
+const qty=+saleQty.value,amount=+saleAmount.value,type=saleType.value;
+data.sales.unshift({date:new Date().toLocaleString('fr-FR'),name:saleName.value,qty,amount,type,client:saleClient.value});
+data[type]+=amount;
+log('Vente',`${saleName.value} x${qty} : ${money(amount)}`);
+e.target.reset();save();
+};
+document.getElementById('memberForm').onsubmit=e=>{
+e.preventDefault();
+data.members.push({name:memberName.value,role:memberRole.value,rib:memberRib.value,contact:memberContact.value});
+log('Annuaire',`Ajout de ${memberName.value}`);
+e.target.reset();save();
+};
+function removeItem(type,index){
+if(!confirm('Supprimer cet élément ?'))return;
+data[type].splice(index,1);save();
+}
+function render(){
+dashClean.textContent=money(data.clean);dashDirty.textContent=money(data.dirty);
+cleanTotal.textContent=money(data.clean);dirtyTotal.textContent=money(data.dirty);
+dashItems.textContent=data.stock.length;dashSales.textContent=data.sales.length;
+stockTable.innerHTML=data.stock.map((x,i)=>`<tr><td>${esc(x.name)}</td><td>${x.qty}</td><td>${money(x.price)}</td><td>${money(x.qty*x.price)}</td><td><button onclick="removeItem('stock',${i})">Supprimer</button></td></tr>`).join('');
+salesTable.innerHTML=data.sales.map(x=>`<tr><td>${esc(x.date)}</td><td>${esc(x.name)}</td><td>${x.qty}</td><td>${money(x.amount)}</td><td>${x.type}</td><td>${esc(x.client)}</td></tr>`).join('');
+membersTable.innerHTML=data.members.map((x,i)=>`<tr><td>${esc(x.name)}</td><td>${esc(x.role)}</td><td>${esc(x.rib)}</td><td>${esc(x.contact)}</td><td><button onclick="removeItem('members',${i})">Supprimer</button></td></tr>`).join('');
+historyTable.innerHTML=data.history.map(x=>`<tr><td>${esc(x.date)}</td><td>${esc(x.type)}</td><td>${esc(x.detail)}</td></tr>`).join('');
+}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function exportData(){
+const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='soz-control-sauvegarde.json';a.click();URL.revokeObjectURL(a.href);
+}
+function importData(e){
+const file=e.target.files[0];if(!file)return;
+const reader=new FileReader();
+reader.onload=()=>{try{const d=JSON.parse(reader.result);if(!d.stock||!d.members||!d.sales)throw Error();data={...defaults,...d};save();alert('Sauvegarde importée !')}catch(err){alert('Fichier de sauvegarde invalide.')}};
+reader.readAsText(file);
+}
+function resetData(){
+if(!confirm('Effacer toutes les données ? Pense à exporter une sauvegarde avant.'))return;
+data=JSON.parse(JSON.stringify(defaults));save();
+}
+let calc='';
+function calcAdd(v){calc+=v;calcDisplay.value=calc}
+function calcClear(){calc='';calcDisplay.value='0'}
+function calcEqual(){
+try{if(!/^[0-9+\-*/.() ]+$/.test(calc))throw Error();const r=Function('"use strict";return ('+calc+')')();if(!Number.isFinite(r))throw Error();calc=String(r);calcDisplay.value=calc}
+catch(e){calc='';calcDisplay.value='Erreur'}
+}
+render();
+</script>
+</body>
+</html>
