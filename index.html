@@ -1,352 +1,148 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>SOZ CONTROL | Dark Syndicate</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SOZ CONTROL — Dark Syndicate</title>
 <style>
-:root {
- --bg:#09080d;--side:#100d17;--panel:#15111e;--panel2:#1d1729;
- --purple:#a855f7;--light:#c084fc;--line:#30223e;
- --text:#f5efff;--muted:#988ba5;--green:#4ade80;--red:#fb7185;
-}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);
- font-family:Inter,Arial,sans-serif;min-height:100vh}
-button,input,select{font:inherit}
-.layout{display:flex;min-height:100vh}
-.sidebar{width:245px;background:var(--side);border-right:1px solid var(--line);
- padding:26px 16px;position:fixed;inset:0 auto 0 0;display:flex;
- flex-direction:column;z-index:5}
-.brand{padding:0 12px 28px;border-bottom:1px solid var(--line)}
-.brand h1{font-size:23px;letter-spacing:3px;color:var(--light);margin:0}
-.brand small{display:block;color:var(--muted);margin-top:7px;letter-spacing:2px}
-.navlabel{font-size:10px;color:var(--muted);letter-spacing:2px;
- padding:25px 12px 10px}
-nav{display:grid;gap:6px}
-nav button{border:0;background:transparent;color:#b8a9c7;
- text-align:left;padding:13px 14px;border-radius:9px;cursor:pointer;
- transition:.2s}
-nav button:hover,nav button.active{background:#39204f;color:white;
- box-shadow:inset 3px 0 var(--purple)}
-.navicon{display:inline-block;width:27px;color:var(--light)}
-.profile{margin-top:auto;border-top:1px solid var(--line);
- padding:18px 10px 0}
-.profile strong{display:block}
-.profile small{color:var(--muted)}
-.status{color:var(--green);font-size:11px;margin-top:8px}
-.main{margin-left:245px;width:calc(100% - 245px);padding:28px 34px}
-.topbar{display:flex;justify-content:space-between;align-items:center;
- gap:15px;margin-bottom:30px}
-.eyebrow{color:var(--light);font-size:10px;letter-spacing:3px}
-.topbar h2{margin:7px 0 0;font-size:25px}
-.date{color:var(--muted);font-size:12px}
-.page{display:none}.page.active{display:block}
-.heading{margin-bottom:22px}
-.heading h2{font-size:22px;margin:0 0 7px}
-.heading p{margin:0;color:var(--muted);font-size:13px}
-.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px}
-.card{background:linear-gradient(145deg,#191322,#110e18);
- border:1px solid var(--line);border-radius:13px;padding:19px;
- margin-bottom:16px;min-width:0}
-.statlabel{font-size:11px;color:var(--muted);letter-spacing:1px}
-.stat{font-size:27px;font-weight:700;margin:13px 0 5px}
-.purple{color:var(--light)}.green{color:var(--green)}.red{color:var(--red)}
-.statnote{font-size:11px;color:var(--muted)}
-.sectiontitle{font-size:15px;margin:0 0 17px}
-.formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px 14px}
-label{display:block;color:var(--muted);font-size:12px;margin:8px 0 5px}
-input,select{width:100%;padding:12px;background:#0d0a12;
- border:1px solid var(--line);border-radius:8px;color:var(--text);
- outline:none}
-input:focus,select:focus{border-color:var(--purple)}
-.btn{border:1px solid var(--line);background:var(--panel2);
- color:white;padding:11px 15px;border-radius:8px;cursor:pointer;
- transition:.2s}
-.btn:hover{border-color:var(--purple);background:#38204c}
-.primary{background:var(--purple);border-color:var(--purple)}
-.primary:hover{background:#9333ea}
-.danger{color:var(--red)}
-.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
-.tablewrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;min-width:550px}
-th{text-align:left;color:var(--muted);font-size:10px;
- letter-spacing:1px;text-transform:uppercase}
-td,th{padding:14px 10px;border-bottom:1px solid var(--line);font-size:12px}
-td{color:#e8def3}
-.empty{text-align:center;color:var(--muted);padding:25px}
-.tag{padding:5px 8px;border-radius:5px;background:#30203f;color:var(--light)}
-.two{display:grid;grid-template-columns:1.2fr .8fr;gap:15px}
-.activity{display:flex;justify-content:space-between;gap:10px;
- padding:12px 0;border-bottom:1px solid var(--line);font-size:12px}
-.activity small{display:block;color:var(--muted);margin-top:5px}
-.calc{max-width:360px}
-.calcdisplay{font-size:30px;text-align:right;margin-bottom:12px}
-.calcgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.calcgrid button{padding:17px 5px;font-size:16px}
-footer{text-align:center;color:var(--muted);font-size:10px;
- padding:30px 0 10px;letter-spacing:2px}
-.mobilehead{display:none}
-@media(max-width:900px){
- .sidebar{width:205px}.main{margin-left:205px;width:calc(100% - 205px);padding:22px}
- .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
- .two{grid-template-columns:1fr}
-}
-@media(max-width:650px){
- .sidebar{width:68px;padding:20px 8px}
- .brand{padding:0 4px 20px}.brand h1{font-size:12px;letter-spacing:0}
- .brand small,.navlabel,.navtext,.profile strong,.profile small,.status{display:none}
- nav button{text-align:center;padding:13px 4px;font-size:18px}
- .navicon{width:auto}
- .profile{text-align:center;padding:15px 0 0}
- .main{margin-left:68px;width:calc(100% - 68px);padding:17px 12px}
- .topbar h2{font-size:19px}.date{display:none}
- .grid{gap:8px}.card{padding:13px}.stat{font-size:21px}
- .formgrid{grid-template-columns:1fr}
-}
+:root{--bg:#09090d;--panel:#12121a;--panel2:#191923;--line:#2a2936;--text:#f2f0f7;--muted:#9995a8;--purple:#a855f7;--purple2:#7026b9;--green:#35d49a;--red:#ff5d78;--gold:#f4c76b}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% 0%,#241333 0,transparent 35%),var(--bg);color:var(--text);font:14px/1.45 Inter,Segoe UI,Arial,sans-serif}
+button,input,select,textarea{font:inherit}button{cursor:pointer}.layout{min-height:100vh}.sidebar{position:fixed;inset:0 auto 0 0;width:238px;background:#0d0c12;border-right:1px solid var(--line);padding:22px 15px;display:flex;flex-direction:column;z-index:5}.brand{padding:5px 10px 25px}.brand b{display:block;font-size:21px;letter-spacing:2px}.brand span{font-size:10px;letter-spacing:3px;color:var(--purple)}.navlabel{color:#686477;font-size:10px;letter-spacing:2px;padding:13px 12px 7px}.nav button{display:flex;align-items:center;gap:12px;width:100%;border:0;background:transparent;color:#aaa6b7;padding:12px;border-radius:9px;text-align:left;margin:2px 0}.nav button:hover,.nav button.active{background:linear-gradient(90deg,#35184c,#1a1423);color:white}.nav button.active{box-shadow:inset 3px 0 var(--purple)}.nav .ico{width:20px;text-align:center;color:#bd7cff}.sidefoot{margin-top:auto;color:#6f6a7b;font-size:11px;padding:14px 10px}.main{margin-left:238px;padding:28px clamp(18px,4vw,48px);max-width:1600px}.top{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:27px}.eyebrow{color:var(--purple);font-size:10px;letter-spacing:2.5px;font-weight:800}.top h1{margin:4px 0 0;font-size:27px}.topright{display:flex;align-items:center;gap:10px}.pill{border:1px solid var(--line);border-radius:30px;padding:8px 12px;color:var(--muted);font-size:11px}.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-right:7px}.page{display:none}.page.active{display:block}.grid{display:grid;gap:15px}.stats{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:16px}.card{background:linear-gradient(145deg,#171620,#111118);border:1px solid var(--line);border-radius:13px;padding:18px;min-width:0;box-shadow:0 8px 24px #0002}.statlabel{font-size:11px;color:var(--muted)}.statvalue{font-size:25px;font-weight:800;margin:8px 0 3px}.statfoot{font-size:10px;color:#777286}.green{color:var(--green)}.red{color:var(--red)}.purple{color:#c084fc}.gold{color:var(--gold)}.two{grid-template-columns:1.5fr 1fr}.three{grid-template-columns:repeat(3,1fr)}.sectionhead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:24px 0 12px}.sectionhead h2{font-size:16px;margin:0}.muted{color:var(--muted)}.small{font-size:11px}.btn{border:1px solid #51306b;background:#29183a;color:#e9d7ff;padding:9px 13px;border-radius:8px;font-weight:700}.btn:hover{background:#40215b}.btn.primary{background:linear-gradient(135deg,#8b36cf,#5d2290);border:0;color:white}.btn.ghost{background:transparent;border-color:var(--line);color:var(--muted)}.btn.danger{background:#3a1722;border-color:#713044;color:#ff9bad}.btnrow{display:flex;gap:8px;flex-wrap:wrap}.field{display:flex;flex-direction:column;gap:5px;margin-bottom:11px}.field label{font-size:11px;color:var(--muted)}input,select,textarea{width:100%;background:#0b0b11;border:1px solid #343141;color:var(--text);padding:10px;border-radius:7px;outline:none}input:focus,select:focus,textarea:focus{border-color:var(--purple)}.formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.formgrid .field{margin:0}.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:9px}table{width:100%;border-collapse:collapse;min-width:500px}th,td{text-align:left;padding:11px 12px;border-bottom:1px solid #292733;font-size:12px}th{color:#aaa3b9;background:#191721;font-size:10px;letter-spacing:1px;text-transform:uppercase}td{color:#e7e3ed}tr:last-child td{border-bottom:0}.empty{text-align:center;color:#817b90;padding:25px}.tag{display:inline-block;padding:4px 8px;border-radius:20px;font-size:10px;background:#291b38;color:#d9b8ff}.bar{height:8px;background:#292532;border-radius:10px;overflow:hidden}.bar span{display:block;height:100%;background:linear-gradient(90deg,#7526ae,#bd72ff);border-radius:10px}.craftrow{display:grid;grid-template-columns:minmax(180px,1fr) 110px 120px;gap:9px;align-items:center;padding:9px 0;border-bottom:1px solid #292733}.craftrow:last-child{border:0}.craftrow input{padding:7px}.materialrow{display:grid;grid-template-columns:1fr 100px 100px;gap:10px;padding:8px 0;border-bottom:1px solid #292733;align-items:center}.materialrow:last-child{border:0}.need{color:var(--gold);font-weight:800}.ok{color:var(--green)}.missing{color:var(--red)}.notice{padding:12px;border:1px solid #55366d;background:#21162c;color:#d8c3ed;border-radius:9px;font-size:12px;margin-bottom:15px}.chartbox{height:250px;position:relative}.chartbox canvas{width:100%;height:100%}.actions{display:flex;gap:8px;flex-wrap:wrap}.mobilehead{display:none}
+@media(max-width:900px){.sidebar{width:68px;padding:15px 8px}.brand{padding:8px 4px 20px}.brand b{font-size:0}.brand b:after{content:"SC";font-size:18px;color:white}.brand span,.navlabel,.nav button .navtext,.sidefoot{display:none}.nav button{justify-content:center;padding:13px}.nav .ico{font-size:17px}.main{margin-left:68px;padding:20px 15px}.stats{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr}}
+@media(max-width:560px){.top{align-items:flex-start;flex-direction:column}.top h1{font-size:23px}.topright{width:100%;justify-content:space-between}.stats{gap:9px}.statvalue{font-size:20px}.three{grid-template-columns:1fr}.formgrid{grid-template-columns:1fr}.craftrow{grid-template-columns:1fr 75px 95px}.materialrow{grid-template-columns:1fr 70px 80px}.card{padding:14px}}
 </style>
 </head>
 <body>
 <div class="layout">
 <aside class="sidebar">
- <div class="brand">
-  <h1>SOZ CONTROL</h1>
-  <small>DARK SYNDICATE</small>
- </div>
- <div class="navlabel">GESTION PRINCIPALE</div>
- <nav>
-  <button class="active" data-page="dashboard" onclick="go(this)"><span class="navicon">◈</span><span class="navtext">Tableau de bord</span></button>
-  <button data-page="finance" onclick="go(this)"><span class="navicon">◆</span><span class="navtext">Finances</span></button>
-  <button data-page="stock" onclick="go(this)"><span class="navicon">▦</span><span class="navtext">Gestion du stock</span></button>
-  <button data-page="sales" onclick="go(this)"><span class="navicon">↗</span><span class="navtext">Ventes</span></button>
-  <button data-page="history" onclick="go(this)"><span class="navicon">◷</span><span class="navtext">Historique</span></button>
+ <div class="brand"><b>SOZ CONTROL</b><span>DARK SYNDICATE</span></div>
+ <div class="navlabel">OPÉRATIONS</div>
+ <nav class="nav">
+  <button class="active" data-page="dashboard"><span class="ico">◈</span><span class="navtext">Dashboard</span></button>
+  <button data-page="finance"><span class="ico">＄</span><span class="navtext">Finance</span></button>
+  <button data-page="stock"><span class="ico">▤</span><span class="navtext">Stock</span></button>
+  <button data-page="crafts"><span class="ico">⚒</span><span class="navtext">Crafts</span></button>
+  <button data-page="sales"><span class="ico">⇧</span><span class="navtext">Ventes</span></button>
+  <button data-page="history"><span class="ico">◷</span><span class="navtext">Historique</span></button>
+  <div class="navlabel">OUTILS</div>
+  <button data-page="directory"><span class="ico">♙</span><span class="navtext">Annuaire</span></button>
+  <button data-page="calculator"><span class="ico">⌗</span><span class="navtext">Calculatrice</span></button>
+  <button data-page="settings"><span class="ico">⚙</span><span class="navtext">Paramètres</span></button>
  </nav>
- <div class="navlabel">AUTRES OUTILS</div>
- <nav>
-  <button data-page="members" onclick="go(this)"><span class="navicon">♟</span><span class="navtext">Annuaire</span></button>
-  <button data-page="calculator" onclick="go(this)"><span class="navicon">▣</span><span class="navtext">Calculatrice</span></button>
-  <button data-page="settings" onclick="go(this)"><span class="navicon">⚙</span><span class="navtext">Paramètres</span></button>
- </nav>
- <div class="profile">
-  <strong>MAVERICK RYDER</strong>
-  <small>ASH & WOLF</small>
-  <div class="status">● SYSTÈME OPÉRATIONNEL</div>
- </div>
+ <div class="sidefoot">SOZ ROLEPLAY · ESPACE PERSONNEL</div>
 </aside>
-
 <main class="main">
- <div class="topbar">
-  <div><div class="eyebrow">ASH & WOLF / TERMINAL PRIVÉ</div>
-  <h2 id="pageTitle">Tableau de bord</h2></div>
-  <div class="date" id="today"></div>
+ <header class="top"><div><div class="eyebrow">MAVERICK RYDER / ASH & WOLF</div><h1 id="pageTitle">Dashboard</h1></div><div class="topright"><span class="pill"><i class="dot"></i>SYSTÈME OPÉRATIONNEL</span><span class="pill" id="today"></span></div></header>
+
+<section class="page active" id="dashboard">
+ <div class="grid stats">
+  <div class="card"><div class="statlabel">ARGENT PROPRE</div><div class="statvalue green" id="dashClean">0 $</div><div class="statfoot">Trésorerie disponible</div></div>
+  <div class="card"><div class="statlabel">ARGENT SALE</div><div class="statvalue red" id="dashDirty">0 $</div><div class="statfoot">Fonds non blanchis</div></div>
+  <div class="card"><div class="statlabel">RÉFÉRENCES EN STOCK</div><div class="statvalue purple" id="dashItems">0</div><div class="statfoot">Types d'articles suivis</div></div>
+  <div class="card"><div class="statlabel">OPÉRATIONS</div><div class="statvalue gold" id="dashOps">0</div><div class="statfoot">Mouvements enregistrés</div></div>
  </div>
+ <div class="grid two">
+  <div class="card"><div class="sectionhead" style="margin-top:0"><h2>Évolution de trésorerie</h2><span class="tag">30 derniers mouvements</span></div><div class="chartbox"><canvas id="cashChart"></canvas></div><div class="small muted">Le graphique se construit au fil des opérations financières enregistrées.</div></div>
+  <div class="card"><div class="sectionhead" style="margin-top:0"><h2>Dernières opérations</h2><button class="btn ghost" onclick="showPage('history')">Tout voir</button></div><div id="dashRecent" class="small muted">Aucune opération pour le moment.</div></div>
+ </div>
+ <div class="sectionhead"><h2>Accès rapide</h2></div><div class="actions"><button class="btn primary" onclick="showPage('finance')">＋ Mouvement financier</button><button class="btn" onclick="showPage('stock')">＋ Gérer le stock</button><button class="btn" onclick="showPage('crafts')">⚒ Préparer un craft</button></div>
+</section>
 
- <section id="dashboard" class="page active">
-  <div class="heading"><h2>Vue d'ensemble</h2>
-   <p>Bienvenue dans ton centre de contrôle, Maverick.</p></div>
-  <div class="grid">
-   <div class="card"><div class="statlabel">ARGENT PROPRE</div><div class="stat green" id="dClean">0 $</div><div class="statnote">Solde disponible</div></div>
-   <div class="card"><div class="statlabel">ARGENT SALE</div><div class="stat red" id="dDirty">0 $</div><div class="statnote">Solde disponible</div></div>
-   <div class="card"><div class="statlabel">RÉFÉRENCES STOCK</div><div class="stat purple" id="dStock">0</div><div class="statnote">Articles enregistrés</div></div>
-   <div class="card"><div class="statlabel">VENTES ENREGISTRÉES</div><div class="stat purple" id="dSales">0</div><div class="statnote">Transactions totales</div></div>
+<section class="page" id="finance">
+ <div class="grid two">
+  <div class="card"><div class="sectionhead" style="margin-top:0"><h2>Enregistrer un mouvement</h2></div>
+   <form id="financeForm"><div class="formgrid">
+    <div class="field"><label>Type de mouvement</label><select id="finKind"><option value="in">Entrée</option><option value="out">Sortie</option></select></div>
+    <div class="field"><label>Compte</label><select id="finAccount"><option value="clean">Argent propre</option><option value="dirty">Argent sale</option></select></div>
+    <div class="field"><label>Montant ($)</label><input id="finAmount" type="number" min="1" step="1" required placeholder="Ex : 5000"></div>
+    <div class="field"><label>Motif</label><input id="finNote" required placeholder="Ex : Vente, achat..."></div>
+   </div><div style="margin-top:13px"><button class="btn primary">Valider le mouvement</button></div></form>
   </div>
-  <div class="two">
-   <div class="card"><h3 class="sectiontitle">Dernières opérations</h3><div id="recent"></div></div>
-   <div class="card"><h3 class="sectiontitle">Valeur du stock</h3><div class="stat purple" id="stockValue">0 $</div><p class="statnote">Valeur théorique de tous les articles</p></div>
-  </div>
- </section>
+  <div class="card"><div class="sectionhead" style="margin-top:0"><h2>Soldes actuels</h2></div><div class="statlabel">ARGENT PROPRE</div><div class="statvalue green" id="finClean">0 $</div><hr style="border:0;border-top:1px solid var(--line);margin:16px 0"><div class="statlabel">ARGENT SALE</div><div class="statvalue red" id="finDirty">0 $</div></div>
+ </div>
+ <div class="sectionhead"><h2>Journal financier</h2></div><div class="tablewrap"><table><thead><tr><th>Date</th><th>Mouvement</th><th>Compte</th><th>Motif</th><th>Montant</th></tr></thead><tbody id="financeRows"></tbody></table></div>
+</section>
 
- <section id="finance" class="page">
-  <div class="heading"><h2>Centre financier</h2><p>Suivi de ta trésorerie RP.</p></div>
-  <div class="grid">
-   <div class="card"><div class="statlabel">ARGENT PROPRE</div><div class="stat green" id="fClean">0 $</div></div>
-   <div class="card"><div class="statlabel">ARGENT SALE</div><div class="stat red" id="fDirty">0 $</div></div>
-  </div>
-  <div class="card"><h3 class="sectiontitle">Nouvelle opération</h3>
-   <form id="financeForm" class="formgrid">
-    <div><label>Type de compte</label><select id="moneyType"><option value="clean">Argent propre</option><option value="dirty">Argent sale</option></select></div>
-    <div><label>Opération</label><select id="moneyAction"><option value="add">Dépôt / Entrée</option><option value="remove">Retrait / Sortie</option></select></div>
-    <div><label>Montant ($)</label><input id="moneyAmount" type="number" min="1" required></div>
-    <div><label>Motif</label><input id="moneyReason" required placeholder="Ex : transaction RP"></div>
-    <button class="btn primary">Valider l'opération</button>
-   </form>
-  </div>
- </section>
+<section class="page" id="stock">
+ <div class="grid two">
+  <div class="card"><div class="sectionhead" style="margin-top:0"><h2>Ajouter / mettre à jour un article</h2></div><form id="stockForm"><div class="field"><label>Nom de l'article</label><input id="stockName" required placeholder="Nom de l'objet"></div><div class="formgrid"><div class="field"><label>Quantité</label><input id="stockQty" type="number" min="0" step="1" required value="1"></div><div class="field"><label>Catégorie</label><input id="stockCat" placeholder="Matériau, objet..."></div></div><div style="margin-top:13px"><button class="btn primary">＋ Enregistrer dans le stock</button></div></form></div>
+  <div class="card"><h2 style="font-size:16px;margin-top:0">Inventaire</h2><div class="statvalue purple" id="stockKinds">0</div><div class="muted small">Références différentes</div><p class="muted small">Les crafts pourront vérifier les quantités disponibles et déduire les matériaux après validation.</p></div>
+ </div>
+ <div class="sectionhead"><h2>Stock disponible</h2><input id="stockSearch" style="max-width:230px" placeholder="Rechercher..." oninput="renderStock()"></div><div class="tablewrap"><table><thead><tr><th>Article</th><th>Catégorie</th><th>Quantité</th><th>Action</th></tr></thead><tbody id="stockRows"></tbody></table></div>
+</section>
 
- <section id="stock" class="page">
-  <div class="heading"><h2>Gestion du stock</h2><p>Inventaire et valorisation des marchandises.</p></div>
-  <div class="card"><h3 class="sectiontitle">Ajouter un article</h3>
-   <form id="stockForm" class="formgrid">
-    <div><label>Nom de l'article</label><input id="itemName" required></div>
-    <div><label>Quantité</label><input id="itemQty" type="number" min="0" required></div>
-    <div><label>Prix unitaire ($)</label><input id="itemPrice" type="number" min="0" required></div>
-    <button class="btn primary">Ajouter au stock</button>
-   </form>
-  </div>
-  <div class="card tablewrap"><table><thead><tr><th>Article</th><th>Quantité</th><th>Prix unitaire</th><th>Valeur totale</th><th>Action</th></tr></thead><tbody id="stockRows"></tbody></table></div>
- </section>
+<section class="page" id="crafts">
+ <div class="notice">Les noms des objets et des matériaux viennent des captures de ton tableur. Les recettes exactes ne sont pas encore renseignées : aucun besoin n'est inventé. Tu pourras les compléter dès que ton pote t'aura transmis les quantités.</div>
+ <div class="grid two">
+  <div class="card"><div class="sectionhead" style="margin-top:0"><h2>Préparer une fabrication</h2></div><div class="field"><label>Objet à confectionner</label><select id="craftSelect"></select></div><div class="field"><label>Nombre à fabriquer</label><input id="craftQty" type="number" min="1" value="1"></div><button class="btn primary" onclick="calculateCraft()">Calculer les matériaux</button><div id="craftResult" class="small muted" style="margin-top:14px">Sélectionne un objet et sa quantité pour calculer les besoins.</div></div>
+  <div class="card"><div class="sectionhead" style="margin-top:0"><h2>Recette sélectionnée</h2><span class="tag">À compléter</span></div><div class="field"><label>Objet</label><select id="recipeSelect" onchange="renderRecipeEditor()"></select></div><div class="muted small" style="margin-bottom:12px">Ajoute chaque matériau et la quantité nécessaire pour fabriquer une unité de cet objet.</div><div class="formgrid"><div class="field"><label>Matériau</label><select id="recipeMaterial"></select></div><div class="field"><label>Quantité / unité</label><input id="recipeAmount" type="number" min="0.01" step="0.01" placeholder="Ex : 2"></div></div><button class="btn" style="margin-top:12px" onclick="addRecipeLine()">＋ Ajouter à la recette</button><div id="recipeLines" style="margin-top:13px"></div></div>
+ </div>
+ <div class="sectionhead"><h2>Liste des objets à confectionner</h2><span class="tag" id="recipeCount">0 recettes renseignées</span></div><div class="tablewrap"><table><thead><tr><th>Objet</th><th>Matériaux définis</th><th>Statut</th></tr></thead><tbody id="recipeOverview"></tbody></table></div>
+ <div class="sectionhead"><h2>Matériaux de référence</h2></div><div class="card"><div id="materialCatalog" class="grid three"></div></div>
+</section>
 
- <section id="sales" class="page">
-  <div class="heading"><h2>Registre des ventes</h2><p>Enregistre tes transactions et recettes.</p></div>
-  <div class="card"><h3 class="sectiontitle">Nouvelle vente</h3>
-   <form id="saleForm" class="formgrid">
-    <div><label>Article vendu</label><input id="saleName" required></div>
-    <div><label>Quantité</label><input id="saleQty" type="number" min="1" required></div>
-    <div><label>Montant total ($)</label><input id="saleAmount" type="number" min="1" required></div>
-    <div><label>Paiement</label><select id="saleType"><option value="clean">Argent propre</option><option value="dirty">Argent sale</option></select></div>
-    <div><label>Client RP</label><input id="saleClient"></div>
-    <button class="btn primary">Enregistrer la vente</button>
-   </form>
-  </div>
-  <div class="card tablewrap"><table><thead><tr><th>Date</th><th>Article</th><th>Quantité</th><th>Montant</th><th>Paiement</th><th>Client</th></tr></thead><tbody id="salesRows"></tbody></table></div>
- </section>
+<section class="page" id="sales">
+ <div class="grid two"><div class="card"><div class="sectionhead" style="margin-top:0"><h2>Enregistrer une vente</h2></div><form id="saleForm"><div class="field"><label>Article vendu</label><select id="saleItem"></select></div><div class="formgrid"><div class="field"><label>Quantité</label><input id="saleQty" type="number" min="1" value="1" required></div><div class="field"><label>Prix total ($)</label><input id="salePrice" type="number" min="0" value="0" required></div></div><div class="field" style="margin-top:10px"><label>Encaissement</label><select id="saleAccount"><option value="clean">Argent propre</option><option value="dirty">Argent sale</option></select></div><div class="field"><label>Note</label><input id="saleNote" placeholder="Client, détail..."></div><button class="btn primary">Valider la vente</button></form></div><div class="card"><h2 style="font-size:16px;margin-top:0">À savoir</h2><p class="muted small">La validation d'une vente déduit la quantité de l'article du stock si cet article est suivi. Le montant est ajouté au compte choisi et la vente apparaît dans l'historique.</p></div></div>
+ <div class="sectionhead"><h2>Historique des ventes</h2></div><div class="tablewrap"><table><thead><tr><th>Date</th><th>Article</th><th>Quantité</th><th>Montant</th><th>Compte</th></tr></thead><tbody id="salesRows"></tbody></table></div>
+</section>
 
- <section id="history" class="page">
-  <div class="heading"><h2>Journal des opérations</h2><p>Traçabilité de tes mouvements.</p></div>
-  <div class="card tablewrap"><table><thead><tr><th>Date</th><th>Catégorie</th><th>Détail</th></tr></thead><tbody id="historyRows"></tbody></table></div>
- </section>
+<section class="page" id="history"><div class="sectionhead"><h2>Journal des opérations</h2><button class="btn ghost" onclick="clearHistory()">Effacer l'historique</button></div><div class="tablewrap"><table><thead><tr><th>Date</th><th>Opération</th><th>Détail</th><th>Montant / quantité</th></tr></thead><tbody id="historyRows"></tbody></table></div></section>
 
- <section id="members" class="page">
-  <div class="heading"><h2>Annuaire Ash & Wolf</h2><p>Répertoire personnel de tes contacts RP.</p></div>
-  <div class="card"><h3 class="sectiontitle">Ajouter un contact</h3>
-   <form id="memberForm" class="formgrid">
-    <div><label>Nom RP</label><input id="memberName" required></div>
-    <div><label>Grade</label><input id="memberRole" placeholder="Membre, chef..."></div>
-    <div><label>RIB fictif RP</label><input id="memberRib" placeholder="ASHW-0000"></div>
-    <div><label>Contact RP</label><input id="memberContact"></div>
-    <button class="btn primary">Ajouter au répertoire</button>
-   </form>
-  </div>
-  <div class="card tablewrap"><table><thead><tr><th>Nom</th><th>Grade</th><th>RIB fictif</th><th>Contact</th><th>Action</th></tr></thead><tbody id="memberRows"></tbody></table></div>
- </section>
+<section class="page" id="directory">
+ <div class="grid two"><div class="card"><div class="sectionhead" style="margin-top:0"><h2>Ajouter un contact RP</h2></div><form id="contactForm"><div class="field"><label>Nom / surnom</label><input id="contactName" required></div><div class="formgrid"><div class="field"><label>Organisation</label><input id="contactOrg" placeholder="Entreprise / groupe"></div><div class="field"><label>Contact</label><input id="contactInfo" placeholder="Téléphone RP"></div></div><div class="field" style="margin-top:10px"><label>Notes</label><input id="contactNote" placeholder="Informations RP"></div><button class="btn primary">＋ Ajouter le contact</button></form></div><div class="card"><h2 style="font-size:16px;margin-top:0">Annuaire personnel</h2><p class="muted small">Tes contacts et notes de roleplay. N'y inscris aucune coordonnée ou information personnelle réelle.</p></div></div>
+ <div class="sectionhead"><h2>Contacts enregistrés</h2></div><div class="tablewrap"><table><thead><tr><th>Nom</th><th>Organisation</th><th>Contact RP</th><th>Notes</th><th></th></tr></thead><tbody id="contactRows"></tbody></table></div>
+</section>
 
- <section id="calculator" class="page">
-  <div class="heading"><h2>Calculatrice</h2><p>Outil de calcul rapide.</p></div>
-  <div class="card calc">
-   <input id="calcDisplay" class="calcdisplay" value="0" readonly>
-   <div class="calcgrid">
-    <button class="btn" onclick="calcClear()">C</button><button class="btn" onclick="calcAdd('/')">÷</button><button class="btn" onclick="calcAdd('*')">×</button><button class="btn" onclick="calcAdd('-')">−</button>
-    <button class="btn" onclick="calcAdd('7')">7</button><button class="btn" onclick="calcAdd('8')">8</button><button class="btn" onclick="calcAdd('9')">9</button><button class="btn" onclick="calcAdd('+')">+</button>
-    <button class="btn" onclick="calcAdd('4')">4</button><button class="btn" onclick="calcAdd('5')">5</button><button class="btn" onclick="calcAdd('6')">6</button><button class="btn primary" onclick="calcEqual()">=</button>
-    <button class="btn" onclick="calcAdd('1')">1</button><button class="btn" onclick="calcAdd('2')">2</button><button class="btn" onclick="calcAdd('3')">3</button><button class="btn" onclick="calcAdd('0')">0</button>
-    <button class="btn" onclick="calcAdd('.')">.</button>
-   </div>
-  </div>
- </section>
+<section class="page" id="calculator"><div class="card" style="max-width:500px"><h2 style="margin-top:0;font-size:17px">Calculatrice rapide</h2><input id="calcDisplay" readonly value="0" style="font-size:25px;text-align:right;margin-bottom:12px"><div class="grid" style="grid-template-columns:repeat(4,1fr);gap:8px" id="calcKeys"></div><p class="muted small">Calcul local simple pour tes opérations RP.</p></div></section>
 
- <section id="settings" class="page">
-  <div class="heading"><h2>Paramètres</h2><p>Gestion de tes données locales.</p></div>
-  <div class="card">
-   <h3 class="sectiontitle">Sauvegarde des données</h3>
-   <p class="statnote">Exporte régulièrement tes données pour éviter de les perdre. La sauvegarde reste liée à ce navigateur.</p>
-   <div class="actions">
-    <button class="btn primary" onclick="exportData()">Exporter JSON</button>
-    <button class="btn" onclick="document.getElementById('importFile').click()">Importer JSON</button>
-    <button class="btn danger" onclick="resetData()">Effacer toutes les données</button>
-    <input id="importFile" type="file" accept=".json" hidden onchange="importData(event)">
-   </div>
-  </div>
-  <div class="card"><h3 class="sectiontitle">Informations système</h3>
-   <p class="statnote">SOZ CONTROL · Dark Syndicate Edition</p>
-   <p class="statnote">Utilisateur : Maverick Ryder</p>
-   <p class="statnote">Organisation : Ash & Wolf</p>
-   <p class="statnote">Stockage : navigateur local</p>
-  </div>
- </section>
- <footer>SOZ CONTROL · ASH & WOLF · DARK SYNDICATE</footer>
-</main>
-</div>
-
+<section class="page" id="settings"><div class="grid two">
+ <div class="card"><h2 style="font-size:16px;margin-top:0">Sauvegarde des données</h2><p class="muted small">Exporte régulièrement une copie JSON pour conserver tes données. L'import remplace les données actuellement enregistrées dans ce navigateur.</p><div class="btnrow"><button class="btn primary" onclick="exportData()">↓ Exporter mes données</button><label class="btn" for="importFile">↑ Importer une sauvegarde</label><input id="importFile" type="file" accept=".json,application/json" style="display:none"></div></div>
+ <div class="card"><h2 style="font-size:16px;margin-top:0">Réinitialisation</h2><p class="muted small">Supprime les données locales de SOZ CONTROL sur ce navigateur. Cette action est irréversible sans sauvegarde.</p><button class="btn danger" onclick="resetData()">Réinitialiser les données</button></div>
+ </div><div class="notice" style="margin-top:15px">Important : cette version enregistre les données dans le stockage local du navigateur (LocalStorage). Elles ne sont pas synchronisées entre appareils. Le dépôt GitHub et le site GitHub Pages sont publics : utilise uniquement des données fictives de roleplay, jamais de vraies coordonnées bancaires ou données personnelles sensibles.</div></section>
+</main></div>
 <script>
-const blank=()=>({stock:[],sales:[],members:[],history:[],clean:0,dirty:0});
-let data;
-try{data={...blank(),...JSON.parse(localStorage.getItem('sozDarkData')||'{}')}}
-catch(e){data=blank()}
-function save(){localStorage.setItem('sozDarkData',JSON.stringify(data));render()}
-function money(n){return Number(n||0).toLocaleString('fr-FR')+' $'}
-function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function log(type,detail){data.history.unshift({date:new Date().toLocaleString('fr-FR'),type,detail})}
-const titles={dashboard:'Tableau de bord',finance:'Finances',stock:'Gestion du stock',sales:'Ventes',history:'Historique',members:'Annuaire',calculator:'Calculatrice',settings:'Paramètres'};
-function go(btn){
- document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
- document.getElementById(btn.dataset.page).classList.add('active');
- document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));
- btn.classList.add('active');document.getElementById('pageTitle').textContent=titles[btn.dataset.page];
-}
-document.getElementById('today').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-
-document.getElementById('stockForm').onsubmit=e=>{
- e.preventDefault();
- const name=document.getElementById('itemName').value.trim(),qty=+document.getElementById('itemQty').value,price=+document.getElementById('itemPrice').value;
- const old=data.stock.find(x=>x.name.toLowerCase()===name.toLowerCase());
- if(old){old.qty+=qty;old.price=price}else data.stock.push({name,qty,price});
- log('Stock',name+' : ajout de '+qty);e.target.reset();save();
-};
-document.getElementById('financeForm').onsubmit=e=>{
- e.preventDefault();const type=moneyType.value,action=moneyAction.value,amount=+moneyAmount.value;
- if(action==='remove'&&data[type]<amount){alert('Solde insuffisant.');return}
- data[type]+=action==='add'?amount:-amount;
- log('Finance',(action==='add'?'Entrée':'Sortie')+' de '+money(amount)+' — '+moneyReason.value);
- e.target.reset();save();
-};
-document.getElementById('saleForm').onsubmit=e=>{
- e.preventDefault();const qty=+saleQty.value,amount=+saleAmount.value,type=saleType.value,name=saleName.value.trim();
- const item=data.stock.find(x=>x.name.toLowerCase()===name.toLowerCase());
- if(item&&item.qty<qty){alert('Stock insuffisant pour cet article.');return}
- if(item)item.qty-=qty;
- data.sales.unshift({date:new Date().toLocaleString('fr-FR'),name,qty,amount,type,client:saleClient.value});
- data[type]+=amount;log('Vente',name+' x'+qty+' : '+money(amount));
- e.target.reset();save();
-};
-document.getElementById('memberForm').onsubmit=e=>{
- e.preventDefault();data.members.push({name:memberName.value,role:memberRole.value,rib:memberRib.value,contact:memberContact.value});
- log('Annuaire','Ajout de '+memberName.value);e.target.reset();save();
-};
-function removeItem(type,i){
- if(!confirm('Supprimer cet élément ?'))return;
- const old=data[type].splice(i,1)[0];log('Suppression','Élément supprimé : '+(old.name||old.detail||''));save();
-}
-function rows(id,html,emptyText){
- document.getElementById(id).innerHTML=html||`<tr><td colspan="8" class="empty">${emptyText||'Aucune donnée enregistrée'}</td></tr>`;
-}
-function render(){
- dClean.textContent=money(data.clean);dDirty.textContent=money(data.dirty);
- fClean.textContent=money(data.clean);fDirty.textContent=money(data.dirty);
- dStock.textContent=data.stock.length;dSales.textContent=data.sales.length;
- stockValue.textContent=money(data.stock.reduce((s,x)=>s+x.qty*x.price,0));
- rows('stockRows',data.stock.map((x,i)=>`<tr><td>${esc(x.name)}</td><td>${x.qty}</td><td>${money(x.price)}</td><td>${money(x.qty*x.price)}</td><td><button class="btn danger" onclick="removeItem('stock',${i})">Supprimer</button></td></tr>`).join(''));
- rows('salesRows',data.sales.map(x=>`<tr><td>${esc(x.date)}</td><td>${esc(x.name)}</td><td>${x.qty}</td><td>${money(x.amount)}</td><td>${esc(x.type)}</td><td>${esc(x.client)}</td></tr>`).join(''));
- rows('memberRows',data.members.map((x,i)=>`<tr><td>${esc(x.name)}</td><td>${esc(x.role)}</td><td>${esc(x.rib)}</td><td>${esc(x.contact)}</td><td><button class="btn danger" onclick="removeItem('members',${i})">Supprimer</button></td></tr>`).join(''));
- rows('historyRows',data.history.map(x=>`<tr><td>${esc(x.date)}</td><td>${esc(x.type)}</td><td>${esc(x.detail)}</td></tr>`).join(''));
- recent.innerHTML=data.history.slice(0,6).map(x=>`<div class="activity"><div>${esc(x.type)}<small>${esc(x.detail)}</small></div><span class="statnote">${esc(x.date)}</span></div>`).join('')||'<p class="statnote">Aucune opération pour le moment.</p>';
-}
-function exportData(){
- const a=document.createElement('a'),url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));
- a.href=url;a.download='soz-control-sauvegarde.json';a.click();URL.revokeObjectURL(url);
-}
-function importData(e){
- const file=e.target.files[0];if(!file)return;
- const r=new FileReader();r.onload=()=>{
- try{const d=JSON.parse(r.result);if(!Array.isArray(d.stock)||!Array.isArray(d.sales)||!Array.isArray(d.members))throw Error();
- data={...blank(),...d};save();alert('Sauvegarde importée !')}
- catch(err){alert('Fichier JSON invalide.')}
- };r.readAsText(file);e.target.value='';
-}
-function resetData(){
- if(!confirm('Effacer définitivement toutes les données de ce navigateur ?'))return;
- data=blank();save();
-}
-let calc='';
-function calcAdd(v){calc+=v;calcDisplay.value=calc}
-function calcClear(){calc='';calcDisplay.value='0'}
-function calcEqual(){
- try{if(!/^[0-9+\-*/.() ]+$/.test(calc))throw Error();
- const n=Function('"use strict";return ('+calc+')')();
- if(!Number.isFinite(n))throw Error();calc=String(n);calcDisplay.value=calc}
- catch(e){calc='';calcDisplay.value='Erreur'}
-}
-render();
+const OBJECTS=["Zip","Munition 9x19","Kit de crochetage miteux","Pistolet","Couteau","Faux ticket de parking","Paquet de cigarette","Tenue de stagiaire PE","Anti Stress","Gilet PB Miteux","Tenue de stagiaire entreprises privées","Kit de crochetage avancé","MRE “Zerc”","Bidons d’essence artisanal","Bidons de kérosène artisanal","Baume anti stress","Pistolet de combat","Tec-9","Pistolet lance fusée","Fusée éclairante","Cocktail Molotov","Gilet PB artisanal","Kit de confection mobile","Cran d’arrêt","Tenue de stagiaire entreprises public","Déverrouilleur universel","Perceuse spéciale","Foret “Fleeca”","Foret “Bijouterie”","Pistolet mitrailleur","C4","Papier d’identité","PayCrimi","PPA"];
+const MATERIALS=["Bon d'achat quelconque","Dentier de papy","Sac à mains de mamie","Bracelet en toc","Smartphone endommagé","Smartphone neuf","Carte de crédit","Ticket de voyage Express","Aluminium","Caoutchouc","Feraille","Bague en diamant","Montre en or","Chaine en or","Viande","Langue","Abat","Rognon","Ruban adhésif","Morceau de plastique","Panthère en bronze","Tube en silicone","Cigarette usagée ERA","Dentifrice MoMaNus","Console portable FailV","Vis","Morceau de Plexiglas","Ecrous","Gel Combustible","Bombonne de Propane","Additif pour carburant","Briquet","Jerrican Vide","Accéléromètre","Flash de Radar","Lentille","Circuit Imprimé","Fils conducteurs","Batterie rechargeable","Module de Stockage","Clef USB","Ecran LCD","Processeur","Transmetteur","Batterie Entamée","Pieces détachées métalliques","Cable Electrique","Régulateur","Condensateur","Relai","Pistolet","Tec-9","GPB Miteux"];
+const KEY="sozDarkDataV2";
+let data=loadData();
+function fresh(){return {clean:0,dirty:0,stock:[],recipes:{},history:[],finance:[],sales:[],contacts:[]}}
+function loadData(){try{let d=JSON.parse(localStorage.getItem(KEY)||"null");return d?{...fresh(),...d}:fresh()}catch(e){return fresh()}}
+function save(){localStorage.setItem(KEY,JSON.stringify(data));renderAll()}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function money(n){return Number(n||0).toLocaleString("fr-FR")+" $"}
+function stamp(){return new Date().toLocaleString("fr-FR")}
+function log(type,detail,value="—"){data.history.unshift({date:stamp(),type,detail,value})}
+function showPage(id){document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===id));document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===id));document.getElementById("pageTitle").textContent=document.querySelector(`[data-page="${id}"] .navtext`).textContent; if(id==="crafts")renderCrafts()}
+document.querySelectorAll(".nav button").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));
+document.getElementById("today").textContent=new Date().toLocaleDateString("fr-FR",{weekday:"short",day:"2-digit",month:"short",year:"numeric"});
+function renderAll(){renderDashboard();renderFinance();renderStock();renderCrafts();renderSales();renderHistory();renderContacts()}
+function renderDashboard(){dashClean.textContent=money(data.clean);dashDirty.textContent=money(data.dirty);dashItems.textContent=data.stock.length;dashOps.textContent=data.history.length;finClean.textContent=money(data.clean);finDirty.textContent=money(data.dirty);dashRecent.innerHTML=data.history.slice(0,6).map(h=>`<div style="padding:9px 0;border-bottom:1px solid var(--line)"><b>${esc(h.type)}</b><div class="muted">${esc(h.detail)} · ${esc(h.date)}</div></div>`).join("")||"Aucune opération pour le moment.";drawChart()}
+function drawChart(){const c=document.getElementById("cashChart"),ctx=c.getContext("2d"),w=c.clientWidth,h=c.clientHeight,dpr=window.devicePixelRatio||1;c.width=w*dpr;c.height=h*dpr;ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);let rows=data.finance.slice().reverse().slice(-30);if(!rows.length){ctx.fillStyle="#817b90";ctx.font="12px Arial";ctx.textAlign="center";ctx.fillText("Enregistre un mouvement financier pour démarrer le graphique",w/2,h/2);return}let clean=[],dirty=[],a=0,b=0;rows.forEach(r=>{if(r.account==="clean")a=r.balance;else b=r.balance;clean.push(a);dirty.push(b)});let max=Math.max(1,...clean,...dirty),pad=25;ctx.strokeStyle="#302b3a";ctx.lineWidth=1;for(let i=0;i<4;i++){let y=pad+(h-2*pad)*i/3;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke()}function line(vals,color){ctx.beginPath();vals.forEach((v,i)=>{let x=pad+(w-2*pad)*(i/Math.max(1,vals.length-1)),y=h-pad-(h-2*pad)*(v/max);i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.strokeStyle=color;ctx.lineWidth=2.5;ctx.stroke()}line(clean,"#35d49a");line(dirty,"#bd72ff");ctx.font="10px Arial";ctx.fillStyle="#aaa";ctx.fillText("Propre",pad,12);ctx.fillStyle="#bd72ff";ctx.fillText("Sale",pad+55,12)}
+document.getElementById("financeForm").addEventListener("submit",e=>{e.preventDefault();let kind=finKind.value,account=finAccount.value,amount=Number(finAmount.value);if(!amount||amount<0)return;if(kind==="out"&&amount>data[account]){alert("Solde insuffisant sur ce compte.");return}data[account]+=kind==="in"?amount:-amount;data.finance.push({date:stamp(),kind,account,amount,balance:data[account]});log(kind==="in"?"Entrée financière":"Sortie financière",finNote.value+" · "+(account==="clean"?"Propre":"Sale"),(kind==="in"?"+":"−")+money(amount));e.target.reset();save()});
+function renderFinance(){financeRows.innerHTML=data.finance.slice().reverse().map(r=>`<tr><td>${esc(r.date)}</td><td class="${r.kind==="in"?"green":"red"}">${r.kind==="in"?"Entrée":"Sortie"}</td><td>${r.account==="clean"?"Propre":"Sale"}</td><td>${esc(r.note||"—")}</td><td>${r.kind==="in"?"+":"−"}${money(r.amount)}</td></tr>`).join("")||'<tr><td colspan="5" class="empty">Aucun mouvement financier.</td></tr>'}
+document.getElementById("stockForm").addEventListener("submit",e=>{e.preventDefault();let name=stockName.value.trim(),qty=Number(stockQty.value),cat=stockCat.value.trim();if(!name||qty<0)return;let item=data.stock.find(x=>x.name.toLowerCase()===name.toLowerCase());if(item){item.qty=qty;item.cat=cat||item.cat}else data.stock.push({name,qty,cat});log("Stock mis à jour",name,qty);e.target.reset();stockQty.value=1;save()});
+function renderStock(){let q=(stockSearch.value||"").toLowerCase();stockRows.innerHTML=data.stock.filter(x=>x.name.toLowerCase().includes(q)).map((x,i)=>`<tr><td>${esc(x.name)}</td><td>${esc(x.cat||"—")}</td><td><input aria-label="Quantité" type="number" min="0" value="${x.qty}" style="max-width:90px" onchange="setStock(${i},this.value)"></td><td><button class="btn danger" onclick="removeStock(${i})">Supprimer</button></td></tr>`).join("")||'<tr><td colspan="4" class="empty">Aucun article dans le stock.</td></tr>';stockKinds.textContent=data.stock.length;saleItem.innerHTML=data.stock.map(x=>`<option value="${esc(x.name)}">${esc(x.name)} (${x.qty})</option>`).join("")||'<option value="">Aucun article en stock</option>'}
+function setStock(i,v){data.stock[i].qty=Math.max(0,Number(v)||0);log("Stock ajusté",data.stock[i].name,data.stock[i].qty);save()}
+function removeStock(i){if(confirm("Supprimer cet article du stock ?")){log("Article supprimé",data.stock[i].name);data.stock.splice(i,1);save()}}
+function initCraftSelects(){craftSelect.innerHTML=OBJECTS.map(x=>`<option>${esc(x)}</option>`).join("");recipeSelect.innerHTML=craftSelect.innerHTML;recipeMaterial.innerHTML=MATERIALS.map(x=>`<option>${esc(x)}</option>`).join("")}
+function renderCrafts(){initCraftSelects();let keys=Object.keys(data.recipes).filter(k=>Object.keys(data.recipes[k]||{}).length);recipeCount.textContent=keys.length+" recettes renseignées";recipeOverview.innerHTML=OBJECTS.map(o=>{let r=data.recipes[o]||{},n=Object.keys(r).length;return `<tr><td>${esc(o)}</td><td>${n?Object.entries(r).map(([m,q])=>esc(m)+" × "+q).join(", "):"—"}</td><td>${n?'<span class="ok">Recette définie</span>':'<span class="muted">En attente</span>'}</td></tr>`}).join("");materialCatalog.innerHTML=MATERIALS.map(m=>`<div class="small" style="padding:5px 0;border-bottom:1px solid var(--line)">${esc(m)}</div>`).join("");renderRecipeEditor()}
+function renderRecipeEditor(){let o=recipeSelect.value,r=data.recipes[o]||{};recipeLines.innerHTML=Object.entries(r).map(([m,q])=>`<div class="materialrow"><span>${esc(m)}</span><b>${q}</b><button class="btn danger" onclick="removeRecipeLine('${encodeURIComponent(o)}','${encodeURIComponent(m)}')">Retirer</button></div>`).join("")||'<div class="muted small">Aucun matériau défini pour cet objet.</div>'}
+function addRecipeLine(){let o=recipeSelect.value,m=recipeMaterial.value,q=Number(recipeAmount.value);if(!q||q<=0){alert("Indique une quantité valide.");return}data.recipes[o]=data.recipes[o]||{};data.recipes[o][m]=(Number(data.recipes[o][m])||0)+q;recipeAmount.value="";log("Recette modifiée",o+" · "+m,q+" / unité");save()}
+function removeRecipeLine(o,m){o=decodeURIComponent(o);m=decodeURIComponent(m);delete data.recipes[o][m];log("Ligne de recette retirée",o+" · "+m);save()}
+function calculateCraft(){let o=craftSelect.value,n=Math.max(1,Number(craftQty.value)||1),r=data.recipes[o]||{},entries=Object.entries(r);if(!entries.length){craftResult.innerHTML='<span class="gold">Recette non renseignée.</span><br>Ajoute les matériaux et quantités dans le panneau « Recette sélectionnée ». ';return}let html=`<b>${n} × ${esc(o)}</b><div style="margin-top:9px">`;entries.forEach(([m,q])=>{let need=q*n,have=data.stock.find(x=>x.name.toLowerCase()===m.toLowerCase())?.qty||0;html+=`<div class="materialrow"><span>${esc(m)}</span><b class="need">${need}</b><span class="${have>=need?"ok":"missing"}">Stock : ${have} ${have>=need?"✓":"(manque "+(need-have)+")"}</span></div>`});craftResult.innerHTML=html+"</div><div class='muted small' style='margin-top:8px'>Calcul indicatif. Le stock n'est pas déduit tant que tu ne valides pas une fabrication.</div><button class='btn primary' style='margin-top:12px' onclick='executeCraft(${JSON.stringify(o).replace(/'/g,"&#39;")},${n})'>Valider la fabrication</button>"}
+function executeCraft(o,n){let r=data.recipes[o]||{},needs=Object.entries(r).map(([m,q])=>[m,q*n]);for(let [m,q] of needs){let item=data.stock.find(x=>x.name.toLowerCase()===m.toLowerCase());if(!item||item.qty<q){alert("Stock insuffisant : "+m+". Aucune quantité n'a été déduite.");return}}if(!confirm("Déduire les matériaux et ajouter "+n+" × "+o+" au stock ?"))return;needs.forEach(([m,q])=>{data.stock.find(x=>x.name.toLowerCase()===m.toLowerCase()).qty-=q});let out=data.stock.find(x=>x.name.toLowerCase()===o.toLowerCase());if(out)out.qty+=n;else data.stock.push({name:o,qty:n,cat:"Craft"});log("Fabrication validée",n+" × "+o,needs.map(x=>x[0]+" × "+x[1]).join(", "));save();calculateCraft()}
+document.getElementById("saleForm").addEventListener("submit",e=>{e.preventDefault();let item=saleItem.value,n=Number(saleQty.value),price=Number(salePrice.value),account=saleAccount.value;if(!item||n<1||price<0)return;let stock=data.stock.find(x=>x.name===item);if(stock&&stock.qty<n){alert("Stock insuffisant.");return}if(stock)stock.qty-=n;data[account]+=price;let s={date:stamp(),item,qty:n,price,account,note:saleNote.value};data.sales.unshift(s);data.finance.push({date:s.date,kind:"in",account,amount:price,balance:data[account],note:"Vente : "+item});log("Vente",n+" × "+item,(price?"+":"")+money(price));e.target.reset();save()});
+function renderSales(){salesRows.innerHTML=data.sales.map(s=>`<tr><td>${esc(s.date)}</td><td>${esc(s.item)}</td><td>${s.qty}</td><td>${money(s.price)}</td><td>${s.account==="clean"?"Propre":"Sale"}</td></tr>`).join("")||'<tr><td colspan="5" class="empty">Aucune vente enregistrée.</td></tr>'}
+function renderHistory(){historyRows.innerHTML=data.history.map(h=>`<tr><td>${esc(h.date)}</td><td>${esc(h.type)}</td><td>${esc(h.detail)}</td><td>${esc(h.value)}</td></tr>`).join("")||'<tr><td colspan="4" class="empty">Aucune opération.</td></tr>'}
+function clearHistory(){if(confirm("Effacer le journal ? Les soldes et le stock ne seront pas modifiés.")){data.history=[];save()}}
+document.getElementById("contactForm").addEventListener("submit",e=>{e.preventDefault();data.contacts.push({name:contactName.value,org:contactOrg.value,info:contactInfo.value,note:contactNote.value});log("Contact ajouté",contactName.value);e.target.reset();save()});
+function renderContacts(){contactRows.innerHTML=data.contacts.map((c,i)=>`<tr><td>${esc(c.name)}</td><td>${esc(c.org)}</td><td>${esc(c.info)}</td><td>${esc(c.note)}</td><td><button class="btn danger" onclick="removeContact(${i})">×</button></td></tr>`).join("")||'<tr><td colspan="5" class="empty">Aucun contact.</td></tr>'}
+function removeContact(i){data.contacts.splice(i,1);save()}
+function exportData(){let blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="soz-control-sauvegarde.json";a.click();URL.revokeObjectURL(a.href)}
+importFile.addEventListener("change",async e=>{let f=e.target.files[0];if(!f)return;try{let d=JSON.parse(await f.text());if(!confirm("Remplacer les données locales par cette sauvegarde ?"))return;data={...fresh(),...d};save();alert("Sauvegarde importée.")}catch(err){alert("Fichier JSON invalide.")}e.target.value=""});
+function resetData(){if(confirm("ATTENTION : supprimer toutes les données locales ?")&&confirm("Dernière confirmation : cette action est irréversible sans export.")){data=fresh();save()}}
+let calc="";const keys=["7","8","9","÷","4","5","6","×","1","2","3","−","C","0",".","+","="];calcKeys.innerHTML=keys.map(k=>`<button class="btn ${k==="="?"primary":""}" style="padding:14px" onclick="calcPress('${k}')">${k}</button>`).join("");function calcPress(k){if(k==="C")calc="";else if(k==="="){try{let safe=calc.replace(/×/g,"*").replace(/÷/g,"/").replace(/−/g,"-");if(!/^[0-9+*/(). -]+$/.test(safe))throw 0;calc=String(Function('"use strict";return ('+safe+')')())}catch(e){calc="Erreur"}}else calc+=k;calcDisplay.value=calc||"0"}
+window.addEventListener("resize",()=>{if(dashboard.classList.contains("active"))drawChart()});
+renderAll();
 </script>
-</body>
-</html>
+</body></html>
