@@ -45,7 +45,8 @@ button,input,select,textarea{font:inherit}button{cursor:pointer}.layout{min-heig
   <div class="card"><div class="sectionhead" style="margin-top:0"><h2>Évolution de trésorerie</h2><span class="tag">30 derniers mouvements</span></div><div class="chartbox"><canvas id="cashChart"></canvas></div><div class="small muted">Le graphique se construit au fil des opérations financières enregistrées.</div></div>
   <div class="card"><div class="sectionhead" style="margin-top:0"><h2>Dernières opérations</h2><button class="btn ghost" onclick="showPage('history')">Tout voir</button></div><div id="dashRecent" class="small muted">Aucune opération pour le moment.</div></div>
  </div>
- <div class="sectionhead"><h2>Accès rapide</h2></div><div class="actions"><button class="btn primary" onclick="showPage('finance')">＋ Mouvement financier</button><button class="btn" onclick="showPage('stock')">＋ Gérer le stock</button><button class="btn" onclick="showPage('crafts')">⚒ Préparer un craft</button></div>
+ <div id="backupReminder" class="notice" style="display:none;margin-top:16px"></div>
+ <div class="sectionhead"><h2>Accès rapide</h2></div><div class="actions"><button class="btn primary" onclick="showPage('finance')">＋ Mouvement financier</button><button class="btn" onclick="showPage('stock')">＋ Gérer le stock</button><button class="btn" onclick="showPage('crafts')">⚒ Préparer un craft</button><button class="btn primary" onclick="exportData()">↓ Sauvegarder maintenant</button></div>
 </section>
 
 <section class="page" id="finance">
@@ -66,9 +67,9 @@ button,input,select,textarea{font:inherit}button{cursor:pointer}.layout{min-heig
 <section class="page" id="stock">
  <div class="grid two">
   <div class="card"><div class="sectionhead" style="margin-top:0"><h2>Ajouter / mettre à jour un article</h2></div><form id="stockForm"><div class="field"><label>Nom de l'article</label><input id="stockName" required placeholder="Nom de l'objet"></div><div class="formgrid"><div class="field"><label>Quantité</label><input id="stockQty" type="number" min="0" step="1" required value="1"></div><div class="field"><label>Catégorie</label><input id="stockCat" placeholder="Matériau, objet..."></div></div><div style="margin-top:13px"><button class="btn primary">＋ Enregistrer dans le stock</button></div></form></div>
-  <div class="card"><h2 style="font-size:16px;margin-top:0">Inventaire</h2><div class="statvalue purple" id="stockKinds">0</div><div class="muted small">Références différentes (les noms communs aux deux listes ne sont pas dupliqués)</div><p class="muted small">Les 34 objets et les 53 matériaux sont préchargés à 0. Modifie directement la quantité dans le tableau et valide avec Entrée ou en quittant le champ. Les crafts utilisent ces stocks.</p></div>
+  <div class="card"><h2 style="font-size:16px;margin-top:0">Inventaire</h2><div class="statvalue purple" id="stockKinds">0</div><div class="muted small">Références différentes (les noms communs aux deux listes ne sont pas dupliqués)</div><p class="muted small">Les 34 objets et les 53 matériaux sont préchargés à 0. Modifie directement le prix unitaire et la quantité dans le tableau et valide avec Entrée ou en quittant le champ. Les crafts utilisent ces stocks.</p></div>
  </div>
- <div class="sectionhead"><h2>Stock disponible</h2><input id="stockSearch" style="max-width:230px" placeholder="Rechercher..." oninput="renderStock()"></div><div class="tablewrap"><table><thead><tr><th>Article</th><th>Catégorie</th><th>Quantité</th><th>Action</th></tr></thead><tbody id="stockRows"></tbody></table></div>
+ <div class="sectionhead"><h2>Stock disponible</h2><input id="stockSearch" style="max-width:230px" placeholder="Rechercher..." oninput="renderStock()"></div><div class="tablewrap"><table><thead><tr><th>Article</th><th>Catégorie</th><th>Prix unitaire ($)</th><th>Quantité</th><th>Action</th></tr></thead><tbody id="stockRows"></tbody></table></div>
 </section>
 
 <section class="page" id="crafts">
@@ -96,7 +97,7 @@ button,input,select,textarea{font:inherit}button{cursor:pointer}.layout{min-heig
 <section class="page" id="calculator"><div class="card" style="max-width:500px"><h2 style="margin-top:0;font-size:17px">Calculatrice rapide</h2><input id="calcDisplay" readonly value="0" style="font-size:25px;text-align:right;margin-bottom:12px"><div class="grid" style="grid-template-columns:repeat(4,1fr);gap:8px" id="calcKeys"></div><p class="muted small">Calcul local simple pour tes opérations RP.</p></div></section>
 
 <section class="page" id="settings"><div class="grid two">
- <div class="card"><h2 style="font-size:16px;margin-top:0">Sauvegarde des données</h2><p class="muted small">Exporte régulièrement une copie JSON pour conserver tes données. L'import remplace les données actuellement enregistrées dans ce navigateur.</p><div class="btnrow"><button class="btn primary" onclick="exportData()">↓ Exporter mes données</button><label class="btn" for="importFile">↑ Importer une sauvegarde</label><input id="importFile" type="file" accept=".json,application/json" style="display:none"></div></div>
+ <div class="card"><h2 style="font-size:16px;margin-top:0">Sauvegarde simplifiée</h2><p class="muted small">Un clic télécharge une copie complète de tes finances RP, stocks, prix unitaires, recettes, ventes et contacts au format JSON. Garde ce fichier en lieu sûr.</p><div class="btnrow"><button class="btn primary" onclick="exportData()">↓ Sauvegarder maintenant</button><label class="btn" for="importFile">↑ Restaurer une sauvegarde</label><input id="importFile" type="file" accept=".json,application/json" style="display:none"></div><p id="backupStatus" class="muted small" style="margin:14px 0 0"></p><p class="muted small">Rappel dans le tableau de bord après 7 jours sans export. La sauvegarde est manuelle et n'est pas envoyée sur GitHub.</p></div>
  <div class="card"><h2 style="font-size:16px;margin-top:0">Réinitialisation</h2><p class="muted small">Supprime les données locales de SOZ CONTROL sur ce navigateur. Cette action est irréversible sans sauvegarde.</p><button class="btn danger" onclick="resetData()">Réinitialiser les données</button></div>
  </div><div class="notice" style="margin-top:15px">Important : cette version enregistre les données dans le stockage local du navigateur (LocalStorage). Elles ne sont pas synchronisées entre appareils. Le dépôt GitHub et le site GitHub Pages sont publics : utilise uniquement des données fictives de roleplay, jamais de vraies coordonnées bancaires ou données personnelles sensibles.</div></section>
 </main></div>
@@ -108,12 +109,12 @@ const KEY="sozDarkDataV2";
 let data=loadData();
 function catalogStock(){
  const catalog=new Map();
- MATERIALS.forEach(name=>catalog.set(name.toLocaleLowerCase('fr'),{name,qty:0,cat:'Matériau'}));
- OBJECTS.forEach(name=>{let key=name.toLocaleLowerCase('fr');if(catalog.has(key))catalog.get(key).cat='Objet / Matériau';else catalog.set(key,{name,qty:0,cat:'Objet confectionnable'});});
+ MATERIALS.forEach(name=>catalog.set(name.toLocaleLowerCase('fr'),{name,qty:0,price:0,cat:'Matériau'}));
+ OBJECTS.forEach(name=>{let key=name.toLocaleLowerCase('fr');if(catalog.has(key))catalog.get(key).cat='Objet / Matériau';else catalog.set(key,{name,qty:0,price:0,cat:'Objet confectionnable'});});
  return [...catalog.values()];
 }
 function ensureCatalog(stock){
- const result=Array.isArray(stock)?stock.filter(x=>x&&typeof x.name==='string').map(x=>({...x,qty:Math.max(0,Number(x.qty)||0)})):[];
+ const result=Array.isArray(stock)?stock.filter(x=>x&&typeof x.name==='string').map(x=>({...x,qty:Math.max(0,Number(x.qty)||0),price:Math.max(0,Number(x.price)||0)})):[];
  const names=new Map(result.map(x=>[x.name.toLocaleLowerCase('fr'),x]));
  for(const item of catalogStock()){
    const key=item.name.toLocaleLowerCase('fr');
@@ -138,11 +139,18 @@ function drawChart(){const c=document.getElementById("cashChart"),ctx=c.getConte
 document.getElementById("financeForm").addEventListener("submit",e=>{e.preventDefault();let kind=finKind.value,account=finAccount.value,amount=Number(finAmount.value);if(!amount||amount<0)return;if(kind==="out"&&amount>data[account]){alert("Solde insuffisant sur ce compte.");return}data[account]+=kind==="in"?amount:-amount;data.finance.push({date:stamp(),kind,account,amount,balance:data[account],note:finNote.value});log(kind==="in"?"Entrée financière":"Sortie financière",finNote.value+" · "+(account==="clean"?"Propre":"Sale"),(kind==="in"?"+":"−")+money(amount));e.target.reset();save()});
 function renderFinance(){financeRows.innerHTML=data.finance.slice().reverse().map(r=>`<tr><td>${esc(r.date)}</td><td class="${r.kind==="in"?"green":"red"}">${r.kind==="in"?"Entrée":"Sortie"}</td><td>${r.account==="clean"?"Propre":"Sale"}</td><td>${esc(r.note||"—")}</td><td>${r.kind==="in"?"+":"−"}${money(r.amount)}</td></tr>`).join("")||'<tr><td colspan="5" class="empty">Aucun mouvement financier.</td></tr>'}
 document.getElementById("stockForm").addEventListener("submit",e=>{e.preventDefault();let name=stockName.value.trim(),qty=Number(stockQty.value),cat=stockCat.value.trim();if(!name||qty<0)return;let item=data.stock.find(x=>x.name.toLowerCase()===name.toLowerCase());if(item){item.qty=qty;item.cat=cat||item.cat}else data.stock.push({name,qty,cat});log("Stock mis à jour",name,qty);e.target.reset();stockQty.value=1;save()});
-function renderStock(){let q=(stockSearch.value||"").toLowerCase();stockRows.innerHTML=data.stock.map((x,i)=>({...x,stockIndex:i})).filter(x=>x.name.toLowerCase().includes(q)).map(x=>`<tr><td>${esc(x.name)}</td><td>${esc(x.cat||"—")}</td><td><input aria-label="Quantité" type="number" min="0" value="${x.qty}" style="max-width:90px" onchange="setStock(${x.stockIndex},this.value)"></td><td><button class="btn danger" onclick="removeStock(${x.stockIndex})">Supprimer</button></td></tr>`).join("")||'<tr><td colspan="4" class="empty">Aucun article dans le stock.</td></tr>';stockKinds.textContent=data.stock.length;saleItem.innerHTML=data.stock.map(x=>`<option value="${esc(x.name)}">${esc(x.name)} (${x.qty})</option>`).join("")||'<option value="">Aucun article en stock</option>'}
+function renderStock(){let q=(stockSearch.value||"").toLowerCase();stockRows.innerHTML=data.stock.map((x,i)=>({...x,stockIndex:i})).filter(x=>x.name.toLowerCase().includes(q)).map(x=>`<tr><td>${esc(x.name)}</td><td>${esc(x.cat||"—")}</td><td><input aria-label="Prix unitaire" type="number" min="0" step="0.01" value="${Number(x.price)||0}" style="max-width:110px" onchange="setStockPrice(${x.stockIndex},this.value)"></td><td><input aria-label="Quantité" type="number" min="0" value="${x.qty}" style="max-width:90px" onchange="setStock(${x.stockIndex},this.value)"></td><td><button class="btn danger" onclick="removeStock(${x.stockIndex})">Supprimer</button></td></tr>`).join("")||'<tr><td colspan="5" class="empty">Aucun article dans le stock.</td></tr>';stockKinds.textContent=data.stock.length;saleItem.innerHTML=data.stock.map(x=>`<option value="${esc(x.name)}">${esc(x.name)} (${x.qty})</option>`).join("")||'<option value="">Aucun article en stock</option>'}
 function setStock(i,v){
  const value=Number(v);
  if(!Number.isFinite(value)||value<0||!Number.isInteger(value)){alert('Saisis une quantité entière positive.');renderStock();return;}
  data.stock[i].qty=value;log('Stock ajusté',data.stock[i].name,value);save();
+}
+function setStockPrice(i,v){
+ const value=Number(v);
+ if(v.trim()===''||!Number.isFinite(value)||value<0){alert('Saisis un prix valide (0 ou plus).');renderStock();return;}
+ data.stock[i].price=Math.round((value+Number.EPSILON)*100)/100;
+ log('Prix unitaire modifié',data.stock[i].name,money(data.stock[i].price));
+ save();
 }
 function removeStock(i){if(confirm("Supprimer cet article du stock ?")){log("Article supprimé",data.stock[i].name);data.stock.splice(i,1);save()}}
 function initCraftSelects(){
@@ -167,11 +175,27 @@ function clearHistory(){if(confirm("Effacer le journal ? Les soldes et le stock 
 document.getElementById("contactForm").addEventListener("submit",e=>{e.preventDefault();data.contacts.push({name:contactName.value,org:contactOrg.value,info:contactInfo.value,note:contactNote.value});log("Contact ajouté",contactName.value);e.target.reset();save()});
 function renderContacts(){contactRows.innerHTML=data.contacts.map((c,i)=>`<tr><td>${esc(c.name)}</td><td>${esc(c.org)}</td><td>${esc(c.info)}</td><td>${esc(c.note)}</td><td><button class="btn danger" onclick="removeContact(${i})">×</button></td></tr>`).join("")||'<tr><td colspan="5" class="empty">Aucun contact.</td></tr>'}
 function removeContact(i){data.contacts.splice(i,1);save()}
-function exportData(){let blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="soz-control-sauvegarde.json";a.click();URL.revokeObjectURL(a.href)}
+const BACKUP_KEY="sozDarkLastExportV1";
+function updateBackupReminder(){
+ const last=Number(localStorage.getItem(BACKUP_KEY)||0),days=last?Math.floor((Date.now()-last)/86400000):null;
+ const message=days===null?"Aucune sauvegarde exportée depuis ce navigateur.":days===0?"Dernier export lancé aujourd'hui.":"Dernier export lancé il y a "+days+" jour"+(days>1?"s":"")+".";
+ const status=document.getElementById("backupStatus"),reminder=document.getElementById("backupReminder");
+ if(status)status.textContent=message+" Conserve le fichier téléchargé pour pouvoir restaurer tes données.";
+ if(reminder){reminder.style.display=(days===null||days>=7)?"block":"none";reminder.innerHTML='<b>Rappel de sauvegarde</b> — '+esc(message)+' <button class="btn primary" style="margin-left:10px" onclick="exportData()">↓ Sauvegarder</button>';}
+}
+function exportData(){
+ try{
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
+  a.href=url;a.download="soz-control-sauvegarde-"+new Date().toISOString().slice(0,10)+".json";document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),60000);
+  localStorage.setItem(BACKUP_KEY,String(Date.now()));updateBackupReminder();
+ }catch(err){alert("Impossible de préparer la sauvegarde : "+err.message)}
+}
 importFile.addEventListener("change",async e=>{let f=e.target.files[0];if(!f)return;try{let d=JSON.parse(await f.text());if(!confirm("Remplacer les données locales par cette sauvegarde ?"))return;data={...fresh(),...d,stock:ensureCatalog(d.stock)};save();alert("Sauvegarde importée.")}catch(err){alert("Fichier JSON invalide.")}e.target.value=""});
 function resetData(){if(confirm("ATTENTION : supprimer toutes les données locales ?")&&confirm("Dernière confirmation : cette action est irréversible sans export.")){data=fresh();save()}}
 let calc="";const keys=["7","8","9","÷","4","5","6","×","1","2","3","−","C","0",".","+","="];calcKeys.innerHTML=keys.map(k=>`<button class="btn ${k==="="?"primary":""}" style="padding:14px" onclick="calcPress('${k}')">${k}</button>`).join("");function calcPress(k){if(k==="C")calc="";else if(k==="="){try{let safe=calc.replace(/×/g,"*").replace(/÷/g,"/").replace(/−/g,"-");if(!/^[0-9+*/(). -]+$/.test(safe))throw 0;calc=String(Function('"use strict";return ('+safe+')')())}catch(e){calc="Erreur"}}else calc+=k;calcDisplay.value=calc||"0"}
 window.addEventListener("resize",()=>{if(dashboard.classList.contains("active"))drawChart()});
 renderAll();
+updateBackupReminder();
 </script>
 </body></html>
